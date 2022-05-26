@@ -12,16 +12,17 @@ class AdaCos(nn.Module):
         self.n_classes = num_classes
         self.s = math.sqrt(2) * math.log(num_classes - 1)
         self.m = m
-        self.W = Parameter(torch.FloatTensor(num_classes, num_features))
-        nn.init.xavier_uniform_(self.W)
+        self.W = nn.Linear(num_features, num_classes, bias=True)
+        """self.W = Parameter(torch.FloatTensor(num_classes, num_features))
+        nn.init.xavier_uniform_(self.W)"""
 
     def forward(self, input, label=None):
         # normalize features
         x = F.normalize(input)
         # normalize weights
-        W = F.normalize(self.W)
+        # W = F.normalize(self.W)
         # dot product
-        logits = F.linear(x, W)
+        logits = self.W(x)
         if label is None:
             return logits
         # feature re-scale
@@ -33,7 +34,7 @@ class AdaCos(nn.Module):
             B_avg = torch.sum(B_avg) / input.size(0)
             # print(B_avg)
             theta_med = torch.median(theta[one_hot == 1])
-            self.s = torch.log(B_avg) / torch.cos(torch.min(math.pi/4 * torch.ones_like(theta_med), theta_med))
+            self.s = torch.log(B_avg) / torch.cos(torch.min(math.pi / 4 * torch.ones_like(theta_med), theta_med))
         output = self.s * logits
 
         return output

@@ -1,0 +1,30 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[[source]]
+url = "https://download.pytorch.org/whl/cu113"
+verify_ssl = true
+name = "downloadpytorch"
+
+[packages]
+torch = "*"
+torchvision = "*"
+torchaudio = "*"
+opencv-python-headless = "*"
+tqdm = "*"
+joblib = "*"
+sklearn = "*"
+pandas = "*"
+ipdb = "*"
+tensorboard = "*"
+pytorch-gradcam = "*"
+matplotlib = "*"
+
+[dev-packages]
+flake8 = "*"
+autopep8 = "*"
+
+[requires]
+python_version = "3.9"
