@@ -53,6 +53,18 @@ def parse_args():
     return args
 
 
+class FocalLoss(nn.Module):
+    def __init__(self, alpha=1, gamma=2):
+        super().__init__()
+        self.alpha = alpha
+        self.gamma = gamma
+
+    def forward(self, inputs, targets):
+        soft_max = torch.diag(F.softmax(inputs, dim=1)[:, targets])
+        focal_loss = - self.alpha * torch.mean((1 - soft_max) ** self.gamma * torch.log(soft_max))
+        return focal_loss
+
+
 def train(args, train_loader, model, criterion, optimizer):
     losses = AverageMeter()
     acc1s = AverageMeter()
@@ -143,9 +155,9 @@ def main():
     classes = config.classes
     dataset = dataloader.MyDataset(args.train_dir, args.height, args.height, classes)
     if args.cpu:
-        criterion = nn.CrossEntropyLoss().cpu()
+        criterion = FocalLoss().cpu()
     else:
-        criterion = nn.CrossEntropyLoss().cuda()
+        criterion = FocalLoss().cuda()
 
     cudnn.benchmark = True
 
